@@ -31,10 +31,23 @@
 ``!pip install imutils``
 
 
+---
+**IV - How to Get Your Own App Passwords 📍📍**
 
+Go to: https://myaccount.google.com/security
+
+Turn on 2-Step Verification if it’s not enabled.
+
+Scroll down and click on App passwords.
+
+Choose the app (e.g., “Mail”) and device (e.g., “Python script”) and click Generate.
+
+Google will give you a 16-character password like yours: ``xxxx xxxx xxxx xxxx``
+
+Copy it once  (it won’t show again!!)
 
 ---
-**IV - Try It Yourself! 🎬**
+**V - Try It Yourself! 🎬**
 
 Want to test the project? 
 
@@ -49,7 +62,7 @@ https://github.com/user-attachments/assets/a2e297ac-2c39-4e59-a1d4-c28df11feb6a
 
 
 ---
-**V - Results 📸**
+**VI - Results 📸**
 
 Here are some example results from the system in action:
 
