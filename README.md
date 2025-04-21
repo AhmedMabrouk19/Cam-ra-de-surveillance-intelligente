@@ -35,7 +35,9 @@
 Want to test the project? Upload one of these sample videos in Google Colab and watch the detection in action:
 🎥 Sample Videos (Right-click to save/download):
 
-![Video hihi](asstes/hihi.mp4)
+https://github.com/user-attachments/assets/7ad6be9b-b985-485b-b5d8-e7427a940fbf
+
+
 
 ---
 **V - Results 📸**
