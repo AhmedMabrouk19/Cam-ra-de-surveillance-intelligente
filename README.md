@@ -37,6 +37,8 @@ Want to test the project? Upload one of these sample videos in Google Colab and 
 
 https://github.com/user-attachments/assets/7ad6be9b-b985-485b-b5d8-e7427a940fbf
 
+https://github.com/user-attachments/assets/a2e297ac-2c39-4e59-a1d4-c28df11feb6a
+
 
 
 ---
