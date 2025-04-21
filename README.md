@@ -49,6 +49,7 @@ Here are some example results from the system in action:
 📷 Movement only detected:
 🎥 Here’s a short demo video:
 
+https://github.com/user-attachments/assets/3e77a028-325d-4b6c-acd2-3c62f224f79b
 
 ---
 <div align="center">
