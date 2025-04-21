@@ -32,7 +32,7 @@
 
 
 ---
-**IV - How to Get Your Own App Passwords 📍📍**
+**IV - How to Get Your Own App Passwords 📍**
 
 Go to: https://myaccount.google.com/security
 
