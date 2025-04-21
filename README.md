@@ -1,5 +1,9 @@
 ![fin](https://github.com/user-attachments/assets/79a6c6bd-8d9c-4f1d-83ce-7591d4e5fd39)
-# Caméra de surveillance intelligente 
+<h1 align="center">Caméra de surveillance intelligente</h1>
+
+
+  
+  
 ---
 **I - Features 🔧**
 
@@ -32,7 +36,10 @@
 ---
 **IV - Try It Yourself! 🎬**
 
-Want to test the project? Upload one of these sample videos in Google Colab and watch the detection in action:
+Want to test the project? 
+
+Upload one of these sample videos in Google Colab and watch the detection in action:
+
 🎥 Sample Videos (Right-click to save/download):
 
 https://github.com/user-attachments/assets/7ad6be9b-b985-485b-b5d8-e7427a940fbf
@@ -45,8 +52,11 @@ https://github.com/user-attachments/assets/a2e297ac-2c39-4e59-a1d4-c28df11feb6a
 **V - Results 📸**
 
 Here are some example results from the system in action:
+
 📷 Face detected with movement — screenshot sent via email:
+
 📷 Movement only detected:
+
 🎥 Here’s a short demo video:
 
 https://github.com/user-attachments/assets/3e77a028-325d-4b6c-acd2-3c62f224f79b
