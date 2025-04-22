@@ -1,4 +1,4 @@
-# Installer imutils si besoin : pip install imutils
+# Installer les bibliothèques nécessaires!!: pip install imutils python-dotenv 
 
 import cv2
 import imutils
@@ -7,115 +7,117 @@ import time
 import threading
 from email.message import EmailMessage
 import os
+from dotenv import load_dotenv
 
-# Chemin de la vidéo (modifie selon ton fichier)
-video_path = r"C:\Users\GIGABYTE\OneDrive\Desktop\projet git\Nouveau dossier\essai face 1.mp4"
+# Charger les informations depuis le fichier .env
+load_dotenv()
+EMAIL_SOURCE = os.getenv("EMAIL_SOURCE")              # <-- Remplace par ton adresse email
+EMAIL_DESTINATION = os.getenv("EMAIL_DESTINATION")    # <-- Remplace par l'adresse email du destinataire
+EMAIL_MOT_DE_PASSE = os.getenv("EMAIL_MOT_DE_PASSE")  # <-- Remplace par ton mot de passe d'application
 
-# Initialisation de la vidéo
-webcam = cv2.VideoCapture(video_path)
 
+# Chemin de la vidéo à analyser
+chemin_video = r"C:\Users\GIGABYTE\OneDrive\Desktop\projet git\Nouveau dossier\essai face 1.mp4"  # <-- Remplacer par le chemin de ta vidéo
+# Initialisation de la capture vidéo
+webcam = cv2.VideoCapture(chemin_video)
 if not webcam.isOpened():
     print("[ERREUR] Impossible d'ouvrir la vidéo. Vérifie le chemin.")
     exit()
 
-# Initialisation du détecteur de visages
-face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+# Détecteur de visages
+detecteur_visages = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
-# Initialisation pour l'enregistrement vidéo
-fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-output = cv2.VideoWriter('video_output_detected.mp4', fourcc, 20.0, (500, 375))  # largeur = 500 après resize
+# Configuration de l’enregistrement vidéo
+codec = cv2.VideoWriter_fourcc(*'mp4v')
+sortie_video = cv2.VideoWriter('video_detectee.mp4', codec, 20.0, (500, 375))
 
-first_frame = None
-last_email_time = 0
-email_interval = 60  # secondes
+premiere_image = None
+dernier_envoi_email = 0
+intervalle_email = 60  # secondes
 
-# Fonction d'envoi d'email (optionnelle)
+# Fonction pour envoyer un email
 def envoyer_email(image_path):
     msg = EmailMessage()
-    msg['Subject'] = 'Alerte : Mouvement ou visage détecté'
-    msg['From'] = "mabrouk122334@gmail.com"
-    msg['To'] = "ahmed.mabrouk.tn@gmail.com"
-    msg.set_content("Un mouvement ou un visage a été détecté. Voici l'image.")
+    msg['Subject'] = 'Alerte : Visage ou mouvement détecté'
+    msg['From'] = EMAIL_SOURCE
+    msg['To'] = EMAIL_DESTINATION
+    msg.set_content("Un visage ou un mouvement a été détecté. Voir la pièce jointe.")
 
     with open(image_path, 'rb') as f:
-        file_data = f.read()
-        file_name = f.name
-    msg.add_attachment(file_data, maintype='image', subtype='jpeg', filename=file_name)
+        contenu_image = f.read()
+        nom_fichier = os.path.basename(f.name)
+    msg.add_attachment(contenu_image, maintype='image', subtype='jpeg', filename=nom_fichier)
 
     try:
         with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-            smtp.login("mabrouk122334@gmail.com", "gilc ifdc svhz mhwj")
+            smtp.login(EMAIL_SOURCE, EMAIL_MOT_DE_PASSE)
             smtp.send_message(msg)
-            print("[INFO] Email envoyé.")
+            print("[INFO] Email envoyé avec succès.")
     except Exception as e:
-        print(f"[ERREUR] Email : {e}")
+        print(f"[ERREUR] Envoi de l'email : {e}")
 
+# Lancer l'envoi d'email dans un thread séparé
 def envoyer_email_thread(image_path):
-    email_thread = threading.Thread(target=envoyer_email, args=(image_path,))
-    email_thread.start()
+    thread = threading.Thread(target=envoyer_email, args=(image_path,))
+    thread.start()
 
-frame_count = 0
+nombre_images = 0
 while True:
-    check, frame = webcam.read()
+    check, image = webcam.read()
     if not check:
-        print("Fin de la vidéo")
+        print("Fin de la vidéo.")
         break
 
-    text = "No Movement"
-    frame = imutils.resize(frame, width=500)
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    gray = cv2.GaussianBlur(gray, (21, 21), 0)
+    etat = "Pas de mouvement"
+    image = imutils.resize(image, width=500)
+    gris = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    gris = cv2.GaussianBlur(gris, (21, 21), 0)
 
-    if first_frame is None:
-        first_frame = gray
+    if premiere_image is None:
+        premiere_image = gris
         continue
 
-    frame_diff = cv2.absdiff(first_frame, gray)
-    thresh = cv2.threshold(frame_diff, 25, 255, cv2.THRESH_BINARY)[1]
-    thresh = cv2.dilate(thresh, None, iterations=2)
+    difference = cv2.absdiff(premiere_image, gris)
+    seuil = cv2.threshold(difference, 25, 255, cv2.THRESH_BINARY)[1]
+    seuil = cv2.dilate(seuil, None, iterations=2)
 
-    contours, _ = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv2.findContours(seuil.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     for contour in contours:
         if cv2.contourArea(contour) < 800:
             continue
-        text = "Movement Detected"
-        (x, y, w, h) = cv2.boundingRect(contour)
-        cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+        etat = "Mouvement détecté"
+        (x, y, l, h) = cv2.boundingRect(contour)
+        cv2.rectangle(image, (x, y), (x+l, y+h), (0, 255, 0), 2)
 
-        roi_gray = gray[y:y+h, x:x+w]
-        roi_color = frame[y:y+h, x:x+w]
-        faces = face_cascade.detectMultiScale(roi_gray, scaleFactor=1.1, minNeighbors=5)
+        zone_gris = gris[y:y+h, x:x+l]
+        zone_couleur = image[y:y+h, x:x+l]
+        visages = detecteur_visages.detectMultiScale(zone_gris, scaleFactor=1.1, minNeighbors=5)
 
-        for (fx, fy, fw, fh) in faces:
-            cv2.rectangle(roi_color, (fx, fy), (fx+fw, fy+fh), (255, 0, 0), 2)
-            text = "Face Detected"
+        for (vx, vy, vl, vh) in visages:
+            cv2.rectangle(zone_couleur, (vx, vy), (vx+vl, vy+vh), (255, 0, 0), 2)
+            etat = "Visage détecté"
 
-            current_time = time.time()
-            if current_time - last_email_time >= email_interval:
-                timestamp = time.strftime("%Y%m%d_%H%M%S")
-                image_path = f"capture_{timestamp}.jpg"
-                cv2.imwrite(image_path, frame)
-                envoyer_email_thread(image_path)
-                last_email_time = current_time
+            maintenant = time.time()
+            if maintenant - dernier_envoi_email >= intervalle_email:
+                horodatage = time.strftime("%Y%m%d_%H%M%S")
+                chemin_image = f"capture_{horodatage}.jpg"
+                cv2.imwrite(chemin_image, image)
+                envoyer_email_thread(chemin_image)
+                dernier_envoi_email = maintenant
 
-    cv2.putText(frame, f"Status: {text}", (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
-    
-    # Affichage de la frame
-    cv2.imshow("Detection", frame)
+    cv2.putText(image, f"Statut : {etat}", (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
+    cv2.imshow("Détection", image)
+    sortie_video.write(image)
 
-    # Enregistrement dans la vidéo de sortie
-    output.write(frame)
-
-    key = cv2.waitKey(1)
-    if key == ord('q'):
+    if cv2.waitKey(1) == ord('q'):
         break
 
-    frame_count += 1
-    if frame_count > 300:  # limite pour éviter que ça tourne trop longtemps
+    nombre_images += 1
+    if nombre_images > 300:  # Limite de frames
         break
 
-# Nettoyage
+# Libération des ressources
 webcam.release()
-output.release()
+sortie_video.release()
 cv2.destroyAllWindows()
