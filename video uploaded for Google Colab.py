@@ -9,15 +9,15 @@ from email.message import EmailMessage
 from google.colab.patches import cv2_imshow
 from google.colab import files
 
-EMAIL_ADDRESS = "your.email@gmail.com"              # <-- Replace with your email
-EMAIL_PASSWORD = "your_app_specific_password"       # <-- Replace with your app password
-RECEIVER_EMAIL = "receiver.email@gmail.com"         # <-- Replace with receiver email
+EMAIL_ADDRESS = "your.email@gmail.com"             # <-- Remplace par ton adresse email
+EMAIL_PASSWORD = "your_app_specific_password"      # <-- Remplace par ton mot de passe d'application
+RECEIVER_EMAIL = "receiver.email@gmail.com"        # <-- Remplace par l'adresse email du destinataire
 
 uploaded = files.upload()
 
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
-video_path = 'essai face 1.mp4'                     #<-- Replace with the exact uploaded video name
+video_path = 'essai face 1.mp4'                    # <-- Remplace par le nom exact de la vidéo importée
 webcam = cv2.VideoCapture(video_path)
 
 first_frame = None
