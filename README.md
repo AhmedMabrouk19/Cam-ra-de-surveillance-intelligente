@@ -73,6 +73,8 @@ Here are some example results from the system in action:
 
 🎥 Here’s a short demo video:
 
+https://github.com/user-attachments/assets/1a92ba31-d3a0-41b1-a0fe-2c5383612df1
+
 https://github.com/user-attachments/assets/3e77a028-325d-4b6c-acd2-3c62f224f79b
 
 ---
